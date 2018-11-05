@@ -7,46 +7,35 @@ import Movie from './Movie';
 
 class App extends Component {
 
-  state = {
-  
-    
-  }
+  state = {}
 
   componentDidMount(){
-    setTimeout(() => {
-        // this.state.greeting = '안녕하세요'
-        // this.setState({
-        //   greeting: '안녕하세요'
-        // })
+    this._getMovies()
+  }
 
-        this.setState({
-          movies: [
-            
-            {
-              title :"matrix",
-              poster : "http://ticketimage.interpark.com/Movie/still_image/V16/V1601447p_s01.gif"
-            },
-            {
-              title : "Full Metal Jacket",
-              poster : "https://www.imagetoday.co.kr/images/event/event_201810_pop.jpg"
-            },
-            {
-              title : "Old Boy",
-              poster : "http://img2.sbs.co.kr/img/sbs_cms/PG/2015/09/04/PG39131527_w1280_h720.jpg"
-            },
-            {
-              title : "Star Wars",
-              poster : "http://ticketimage.interpark.com/Movie/still_image/V16/V1601447p_s01.gif"
-            }
-          ]
-        })
-    }, 5000)
+   _getMovies = async () => {
+    const movies = await this._callApi()
+    this.setState({
+      movies
+    }) 
+  }
+
+  _callApi = () =>{
+    return fetch ('https://yts.am/api/v2/list_movies.json?sort_by=download_count')
+    .then(potato => potato.json())
+    .then(json => json.data.movies)
+    .catch(err => console.log(err))
   }
 
   _renderMovies = () => {
-    const movies = this.state.movies.map( (movie ,index)=> {
+    const movies = this.state.movies.map( (movie)=> {
             
-      return <Movie title={movie.title} poster={movie.poster} key={index}/>
+      return <Movie title={movie.title} 
+      poster={movie.small_cover_image} 
+      key={movie.id}
+      genres ={movie.genres}
+      synopsis = {movie.synopsis}
+      />
     })
     return movies
   }
@@ -66,3 +55,4 @@ class App extends Component {
 }
 
 export default App;
+
